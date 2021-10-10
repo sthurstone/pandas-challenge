@@ -1,0 +1,861 @@
++*In[1297]:*+
+[source, ipython3]
+----
+%matplotlib notebook 
+
+# Dependencies and Setup
+import pandas as pd
+
+# File to Load (Remember to Change These)
+school_data_to_load = "Resources/schools_complete.csv"
+student_data_to_load = "Resources/students_complete.csv"
+
+# Read School and Student Data File and store into Pandas DataFrames
+school_data_df = pd.read_csv(school_data_to_load)
+student_data_df = pd.read_csv(student_data_to_load)
+
+school_data_df.head(10)
+student_data_df.head(10)
+
+
+----
+
+
++*Out[1297]:*+
+----
+[cols=",,,,,,,",options="header",]
+|===
+| |Student ID |student_name |gender |grade |school_name |reading_score
+|math_score
+|0 |0 |Paul Bradley |M |9th |Huang High School |66 |79
+
+|1 |1 |Victor Smith |M |12th |Huang High School |94 |61
+
+|2 |2 |Kevin Rodriguez |M |12th |Huang High School |90 |60
+
+|3 |3 |Dr. Richard Scott |M |12th |Huang High School |67 |58
+
+|4 |4 |Bonnie Ray |F |9th |Huang High School |97 |84
+
+|5 |5 |Bryan Miranda |M |9th |Huang High School |94 |94
+
+|6 |6 |Sheena Carter |F |11th |Huang High School |82 |80
+
+|7 |7 |Nicole Baker |F |12th |Huang High School |96 |69
+
+|8 |8 |Michael Roth |M |10th |Huang High School |95 |87
+
+|9 |9 |Matthew Greene |M |10th |Huang High School |96 |84
+|===
+----
+
+
++*In[1298]:*+
+[source, ipython3]
+----
+# Combine the data into a single dataset.  
+school_data_complete_df = pd.merge(student_data, school_data, how="left", on=["school_name", "school_name"])
+school_data_complete_df.head(10)
+----
+
+
++*Out[1298]:*+
+----
+[cols=",,,,,,,,,,,",options="header",]
+|===
+| |Student ID |student_name |gender |grade |school_name |reading_score
+|math_score |School ID |type |size |budget
+|0 |0 |Paul Bradley |M |9th |Huang High School |66 |79 |0 |District
+|2917 |1910635
+
+|1 |1 |Victor Smith |M |12th |Huang High School |94 |61 |0 |District
+|2917 |1910635
+
+|2 |2 |Kevin Rodriguez |M |12th |Huang High School |90 |60 |0 |District
+|2917 |1910635
+
+|3 |3 |Dr. Richard Scott |M |12th |Huang High School |67 |58 |0
+|District |2917 |1910635
+
+|4 |4 |Bonnie Ray |F |9th |Huang High School |97 |84 |0 |District |2917
+|1910635
+
+|5 |5 |Bryan Miranda |M |9th |Huang High School |94 |94 |0 |District
+|2917 |1910635
+
+|6 |6 |Sheena Carter |F |11th |Huang High School |82 |80 |0 |District
+|2917 |1910635
+
+|7 |7 |Nicole Baker |F |12th |Huang High School |96 |69 |0 |District
+|2917 |1910635
+
+|8 |8 |Michael Roth |M |10th |Huang High School |95 |87 |0 |District
+|2917 |1910635
+
+|9 |9 |Matthew Greene |M |10th |Huang High School |96 |84 |0 |District
+|2917 |1910635
+|===
+----
+
+
++*In[1299]:*+
+[source, ipython3]
+----
+# Check to see if there are any rows with missing data (results show there are none, so we don't have to delete rows)
+#note: data type shows integer
+school_data_complete_df.count()
+----
+
+
++*Out[1299]:*+
+----Student ID       39170
+student_name     39170
+gender           39170
+grade            39170
+school_name      39170
+reading_score    39170
+math_score       39170
+School ID        39170
+type             39170
+size             39170
+budget           39170
+dtype: int64----
+
+
++*In[1300]:*+
+[source, ipython3]
+----
+#create dataframe holding everything for index
+DATA_df=pd.DataFrame({
+    "Student ID"
+    "student_name",
+    "gender",
+    "grade",
+    "school_name", 
+    "reading_score",
+    "math_score",
+    "School ID",
+    "type",
+    "size",
+    "budget"
+})
+
+DATA_df
+----
+
+
++*Out[1300]:*+
+----
+[cols=",",options="header",]
+|===
+| |0
+|0 |school_name
+|1 |School ID
+|2 |Student IDstudent_name
+|3 |type
+|4 |grade
+|5 |reading_score
+|6 |size
+|7 |budget
+|8 |gender
+|9 |math_score
+|===
+----
+
+
+
+
++*In[1301]:*+
+[source, ipython3]
+----
+#Calculate the total number of schools
+
+total_number_schools=len(school_data_complete_df["School ID"].unique())
+
+total_number_schools
+
+----
+
+
++*Out[1301]:*+
+----15----
+
+
++*In[1302]:*+
+[source, ipython3]
+----
+#Calculate the total number of students
+
+total_number_students=len(school_data_complete_df["Student ID"].unique())
+
+total_number_students
+----
+
+
++*Out[1302]:*+
+----39170----
+
+
++*In[1303]:*+
+[source, ipython3]
+----
+#Calculate the total budget
+
+total_budget=(school_data_df["budget"].sum())
+
+total_budget
+----
+
+
++*Out[1303]:*+
+----24649428----
+
+
++*In[1304]:*+
+[source, ipython3]
+----
+# Calculate the average math score 
+
+average_math_score=(school_data_complete_df["math_score"].mean())
+
+average_math_score
+----
+
+
++*Out[1304]:*+
+----78.98537145774827----
+
+
++*In[1305]:*+
+[source, ipython3]
+----
+# Calculate the average reading score
+
+average_reading_score=(school_data_complete_df["reading_score"].mean())
+
+average_reading_score
+----
+
+
++*Out[1305]:*+
+----81.87784018381414----
+
+
++*In[1306]:*+
+[source, ipython3]
+----
+# Calculate the percentage of students with a passing math score (70 or greater)
+
+student_data_df["Passing Math"]=student_data_df["math_score"]>=70
+percent_passing_math=(student_data_df["Passing Math"].mean())*100
+
+percent_passing_math
+----
+
+
++*Out[1306]:*+
+----74.9808526933878----
+
+
++*In[1307]:*+
+[source, ipython3]
+----
+# Calculate the percentage of students with a passing reading score (70 or greater)
+
+student_data_df["Passing Reading"]=student_data_df["reading_score"]>=70
+percent_passing_reading=(student_data_df["Passing Reading"].mean())*100
+
+percent_passing_reading
+----
+
+
++*Out[1307]:*+
+----85.80546336482001----
+
+
++*In[1308]:*+
+[source, ipython3]
+----
+# Calculate the percentage of students who passed math and reading (% Overall Passing)
+
+percent_passing_math_reading=(percent_passing_math+percent_passing_reading)/2
+
+percent_passing_math_reading
+----
+
+
++*Out[1308]:*+
+----80.39315802910392----
+
+
++*In[1309]:*+
+[source, ipython3]
+----
+# Create a dataframe to hold the above results
+
+District_Scoring =pd.DataFrame({
+    "Total Schools": [total_number_schools],
+    "Total Students": [total_number_students],
+    "Total Budget":[total_budget],
+    "Average Math Score": [average_math_score],
+    "Average Reading Score": [average_reading_score], 
+    "% Passing Math":[percent_passing_math],
+    "% Passing Reading":[percent_passing_reading],
+    "Overall Passing Rate":[percent_passing_math_reading]})
+
+District_Scoring
+
+----
+
+
++*Out[1309]:*+
+----
+[cols=",,,,,,,,",options="header",]
+|===
+| |Total Schools |Total Students |Total Budget |Average Math Score
+|Average Reading Score |% Passing Math |% Passing Reading |Overall
+Passing Rate
+|0 |15 |39170 |24649428 |78.985371 |81.87784 |74.980853 |85.805463
+|80.393158
+|===
+----
+
+
+
+
+
+
++*In[1310]:*+
+[source, ipython3]
+----
+new_school_df=pd.DataFrame(school_data_complete_df)
+
+new_school_df
+----
+
+
++*Out[1310]:*+
+----
+[cols=",,,,,,,,,,,",options="header",]
+|===
+| |Student ID |student_name |gender |grade |school_name |reading_score
+|math_score |School ID |type |size |budget
+|0 |0 |Paul Bradley |M |9th |Huang High School |66 |79 |0 |District
+|2917 |1910635
+
+|1 |1 |Victor Smith |M |12th |Huang High School |94 |61 |0 |District
+|2917 |1910635
+
+|2 |2 |Kevin Rodriguez |M |12th |Huang High School |90 |60 |0 |District
+|2917 |1910635
+
+|3 |3 |Dr. Richard Scott |M |12th |Huang High School |67 |58 |0
+|District |2917 |1910635
+
+|4 |4 |Bonnie Ray |F |9th |Huang High School |97 |84 |0 |District |2917
+|1910635
+
+|... |... |... |... |... |... |... |... |... |... |... |...
+
+|39165 |39165 |Donna Howard |F |12th |Thomas High School |99 |90 |14
+|Charter |1635 |1043130
+
+|39166 |39166 |Dawn Bell |F |10th |Thomas High School |95 |70 |14
+|Charter |1635 |1043130
+
+|39167 |39167 |Rebecca Tanner |F |9th |Thomas High School |73 |84 |14
+|Charter |1635 |1043130
+
+|39168 |39168 |Desiree Kidd |F |10th |Thomas High School |99 |90 |14
+|Charter |1635 |1043130
+
+|39169 |39169 |Carolyn Jackson |F |11th |Thomas High School |95 |75 |14
+|Charter |1635 |1043130
+|===
+
+39170 rows × 11 columns
+----
+
+
++*In[1311]:*+
+[source, ipython3]
+----
+new_school_df.groupby(["school_name"])
+----
+
+
++*Out[1311]:*+
+----<pandas.core.groupby.generic.DataFrameGroupBy object at 0x0000013B81CB5190>----
+
+
++*In[1312]:*+
+[source, ipython3]
+----
+#School type
+
+school_type=school_data_df.set_index('school_name')['type'].unique()
+
+school_type
+
+----
+
+
++*Out[1312]:*+
+----array(['District', 'Charter'], dtype=object)----
+
+
++*In[1313]:*+
+[source, ipython3]
+----
+#student count per school
+student_count_school=school_name["Student ID"].count()
+student_count_school
+----
+
+
++*Out[1313]:*+
+----school_name
+Bailey High School       4976
+Cabrera High School      1858
+Figueroa High School     2949
+Ford High School         2739
+Griffin High School      1468
+Hernandez High School    4635
+Holden High School        427
+Huang High School        2917
+Johnson High School      4761
+Pena High School          962
+Rodriguez High School    3999
+Shelton High School      1761
+Thomas High School       1635
+Wilson High School       2283
+Wright High School       1800
+Name: Student ID, dtype: int64----
+
+
++*In[1314]:*+
+[source, ipython3]
+----
+#Budget per school
+
+school_budget=school_data_complete_df.set_index(["school_name"])["budget"].sum()
+
+school_budget
+----
+
+
++*Out[1314]:*+
+----82932329558----
+
+
++*In[1315]:*+
+[source, ipython3]
+----
+Budget_per_student=(school_data_complete_df.set_index("school_name")["budget"]/
+                    school_data_complete_df.set_index("school_name")["size"])
+
+Budget_per_student
+----
+
+
++*Out[1315]:*+
+----school_name
+Huang High School     655.0
+Huang High School     655.0
+Huang High School     655.0
+Huang High School     655.0
+Huang High School     655.0
+                      ...  
+Thomas High School    638.0
+Thomas High School    638.0
+Thomas High School    638.0
+Thomas High School    638.0
+Thomas High School    638.0
+Length: 39170, dtype: float64----
+
+
++*In[1316]:*+
+[source, ipython3]
+----
+#average math score per school
+
+average_math_school=(round(school_data_complete_df.groupby(["school_name"])["math_score"].mean(),2))
+
+average_math_school
+----
+
+
++*Out[1316]:*+
+----school_name
+Bailey High School       77.05
+Cabrera High School      83.06
+Figueroa High School     76.71
+Ford High School         77.10
+Griffin High School      83.35
+Hernandez High School    77.29
+Holden High School       83.80
+Huang High School        76.63
+Johnson High School      77.07
+Pena High School         83.84
+Rodriguez High School    76.84
+Shelton High School      83.36
+Thomas High School       83.42
+Wilson High School       83.27
+Wright High School       83.68
+Name: math_score, dtype: float64----
+
+
++*In[1317]:*+
+[source, ipython3]
+----
+#average reading score per school
+
+average_reading_school=(round(school_data_complete_df.groupby(["school_name"])["reading_score"].mean(),2))
+
+average_reading_school
+----
+
+
++*Out[1317]:*+
+----school_name
+Bailey High School       81.03
+Cabrera High School      83.98
+Figueroa High School     81.16
+Ford High School         80.75
+Griffin High School      83.82
+Hernandez High School    80.93
+Holden High School       83.81
+Huang High School        81.18
+Johnson High School      80.97
+Pena High School         84.04
+Rodriguez High School    80.74
+Shelton High School      83.73
+Thomas High School       83.85
+Wilson High School       83.99
+Wright High School       83.96
+Name: reading_score, dtype: float64----
+
+
++*In[1318]:*+
+[source, ipython3]
+----
+#calculate percent of students passing math per school, then group percent to each school 
+
+student_passing_math=school_data_complete_df.loc[school_data_complete["math_score"]>=70].groupby('school_name')['Student ID'].count
+
+percent_math_passing_school=(round(student_school_passing_math/student_count_school*100,2))
+percent_math_passing_school
+
+----
+
+
++*Out[1318]:*+
+----Bailey High School       66.68
+Cabrera High School      94.13
+Figueroa High School     65.99
+Ford High School         68.31
+Griffin High School      93.39
+Hernandez High School    66.75
+Holden High School       92.51
+Huang High School        65.68
+Johnson High School      66.06
+Pena High School         94.59
+Rodriguez High School    66.37
+Shelton High School      93.87
+Thomas High School       93.27
+Wilson High School       93.87
+Wright High School       93.33
+dtype: float64----
+
+
++*In[1319]:*+
+[source, ipython3]
+----
+#calculate percent of students passing reading per school, then group percent to each school 
+
+student_passing_reading=school_data_complete_df.loc[school_data_complete["reading_score"]>=70].groupby('school_name')['Student ID'].count
+
+percent_reading_passing_school=(round(student_school_passing_reading/student_count_school*100,2))
+
+percent_reading_passing_school
+----
+
+
++*Out[1319]:*+
+----Bailey High School       81.93
+Cabrera High School      97.04
+Figueroa High School     80.74
+Ford High School         79.30
+Griffin High School      97.14
+Hernandez High School    80.86
+Holden High School       96.25
+Huang High School        81.32
+Johnson High School      81.22
+Pena High School         95.95
+Rodriguez High School    80.22
+Shelton High School      95.85
+Thomas High School       97.31
+Wilson High School       96.54
+Wright High School       96.61
+dtype: float64----
+
+
++*In[1320]:*+
+[source, ipython3]
+----
+#calculate percent of students passing math and reading per school, then group percent to each school 
+
+overall_passing_school=(round(percent_math_passing_school+percent_reading_passing_school/student_count_school,2))
+
+overall_passing_school
+----
+
+
++*Out[1320]:*+
+----Bailey High School       66.70
+Cabrera High School      94.18
+Figueroa High School     66.02
+Ford High School         68.34
+Griffin High School      93.46
+Hernandez High School    66.77
+Holden High School       92.74
+Huang High School        65.71
+Johnson High School      66.08
+Pena High School         94.69
+Rodriguez High School    66.39
+Shelton High School      93.92
+Thomas High School       93.33
+Wilson High School       93.91
+Wright High School       93.38
+dtype: float64----
+
+
++*In[1321]:*+
+[source, ipython3]
+----
+# create district_summary dataframe for display
+
+school_summary_df = pd.DataFrame({"School Type":school_type,
+                                "Total Students":student_count_school,
+                                "Total School Budget":school_budget,
+                                "Budget Per Student":Budget_per_student,
+                                "Average Math Score": average_math_school,
+                                "Average Reading Score": average_reading_school,
+                                "% Passing Math": percent_passing_math,
+                                "% Passing Reading": percent_passing_reading,
+                                "% Overall Passing Rate":overall_passing_school}),columns=["School Type",
+                                                                                         "Total Students",
+                                                                                         "Total School Budget",
+                                                                                         "Average Math Score",
+                                                                                         "Average Reading Score",
+                                                                                         "% Passing Math",
+                                                                                         "% Passing Reading",
+                                                                                         "% Overall Passing Rate"])
+school_summary_complete_df = school_summary_df.groupby(["School Name"], ["School Type"])
+
+
+school_summary_df
+
+
+#I KEEP GETTING THE SAME ARRAY / INDEX ERROR STOPPING MY GRAPH FROM PRINTING NO MATTER WHAT I DO.....
+----
+
+
++*Out[1321]:*+
+----
+
+      File "<ipython-input-1321-f9abd1b310ca>", line 18
+        "% Overall Passing Rate"])
+                                 ^
+    SyntaxError: unmatched ')'
+    
+
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+Top_Performing_Schools_Overall = School_summary_df.sort_values(["Percentage of Overall Passing Students per School"], ascending=False)
+Top_Performing_Schools_Overall
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+Bottom_Performing_Schools_Overall = School_summary_df.sort_values([
+    "Percentage of Overall Passing Students per School"], ascending=True)
+Bottom_Performing_Schools_Overall.head(5)
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+#Create series per grade
+
+nineth_graders = school_data_complete[(school_data_complete["grade"] == "9th")]
+tenth_graders = school_data_complete[(school_data_complete["grade"] == "10th")]
+eleventh_graders = school_data_complete[(school_data_complete["grade"] == "11th")]
+twelfth_graders = school_data_complete[(school_data_complete["grade"] == "12th")]
+
+#group series by school/math score & clean data to only have two decimal places
+
+nineth_graders_scores = nineth_graders.groupby(["school_name"]).mean()["math_score"].map("{:,.2f}".format)
+tenth_graders_scores = tenth_graders.groupby(["school_name"]).mean()["math_score"].map("{:,.2f}".format)
+eleventh_graders_scores = eleventh_graders.groupby(["school_name"]).mean()["math_score"].map("{:,.2f}".format)
+twelfth_graders_scores = twelfth_graders.groupby(["school_name"]).mean()["math_score"].map("{:,.2f}".format)
+
+#create dataframe
+
+
+Math_scores_grade = pd.DataFrame({"9th": nineth_graders_scores,
+                                "10th":tenth_graders_scores,
+                                "11th":eleventh_graders_scores,
+                                "12th":twelfth_graders_scores})
+
+
+
+Math_scores_grade
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+#Create series per grade
+
+nineth_graders = school_data_complete[(school_data_complete["grade"] == "9th")]
+tenth_graders = school_data_complete[(school_data_complete["grade"] == "10th")]
+eleventh_graders = school_data_complete[(school_data_complete["grade"] == "11th")]
+twelfth_graders = school_data_complete[(school_data_complete["grade"] == "12th")]
+
+#group series by school/reading score & clean data to only have two decimal places
+
+nineth_graders_scores = nineth_graders.groupby(["school_name"]).mean()["reading_score"].map("{:,.2f}".format)
+tenth_graders_scores = tenth_graders.groupby(["school_name"]).mean()["reading_score"].map("{:,.2f}".format)
+eleventh_graders_scores = eleventh_graders.groupby(["school_name"]).mean()["reading_score"].map("{:,.2f}".format)
+twelfth_graders_scores = twelfth_graders.groupby(["school_name"]).mean()["reading_score"].map("{:,.2f}".format)
+
+#create dataframe
+
+
+Reading_scores_grade = pd.DataFrame({"9th": nineth_graders_scores,
+                                "10th":tenth_graders_scores,
+                                "11th":eleventh_graders_scores,
+                                "12th":twelfth_graders_scores})
+Reading_scores_grade
+
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+# Scores_School_Spending
+
+bins = [0, 550, 650, 750]
+
+#label bins
+
+student_spending = ["<$550", "$550-650", "$650-750"]
+
+school_summary_df["Student spending(Per Student)"] = pd.cut(Budget_per_student, bins=bins, labels=student_spending)
+school_summary_df.head()
+
+spending_math_score = school_summary_df.groupby(round(["Student spending(Per Student)"])["Average Math Score"].mean(),2)
+spending_reading_score = school_summary_df.groupby(round(["Student spending(Per Student)"])["Average Reading Score"].mean(),2)
+spending_passing_math = school_summary_df.groupby(round(["Student spending(Per Student)"])["% Passing Math"].mean(),2)
+spending_passing_reading = school_summary_df.groupby(round["Student spending(Per Student)"])['% Passing Reading'].mean(),2
+overall_passing_rate = (spending_passing_math + spending_passing_reading)/2
+
+#Define dataframe
+scores_school_spending = pd.DataFrame ({"Average Math Score": spending_math_score,
+    "Average Reading Score": spending_reading_score,
+    "% Passing Math": spending_passing_math,
+    "% Passing Reading": spending_passing_reading,
+    "Overall Passing Rate": overall_passing_rate})
+
+scores_school_spending
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+bins=(0,1000,2000,3000)
+
+#label bins
+School_size_scores=["0-1000", "1000-2000","2000-3000"]
+
+
+scores_school_size_df = school_summary_df
+scores_school_size_df["School Size"] = pd.cut(student_count, bins=bins, labels=School_size_scores)
+scores_school_size_df
+
+spending_math_score = scores_school_size_df.groupby(round(["School Size"])["Average Math Score"].mean(),2)
+spending_reading_score = scores_school_size_df.groupby(round(["School Size"])["Average Reading Score"].mean(),2)
+spending_passing_math = scores_school_size_df.groupby(round(["School Size"])["% Passing Math"].mean(),2)
+spending_passing_reading = scores_school_size_df.groupby(round(["School Size"])['% Passing Reading'].mean(),2)
+overall_passing_rate = round((spending_passing_math + spending_passing_reading)/2,2)
+
+#define dataframe
+scores_school_size = pd.DataFrame ({"Average Math Score": spending_math_score,
+    "Average Reading Score": spending_reading_score,
+    "% Passing Math": spending_passing_math,
+    "% Passing Reading": spending_passing_reading,
+    "Overall Passing Rate": overall_passing_rate})
+
+scores_school_size_df
+
+----
+
+
+
+
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+Scores_School_Type = school_summary_df[["School Type",
+                                        "Average Math Score",
+                                        "Average Reading Score", 
+                                        "% Passing Math", 
+                                        "% Passing Reading", 
+                                        "% Overall Passing Rate"]]
+Scores_School_Type = round(Scores_School_Type.groupby('School Type').mean(),2)
+Scores_School_Type_df
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+##Above not printing because school_summary_df is not displaying the graph 
+----
