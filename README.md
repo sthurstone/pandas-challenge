@@ -8,9 +8,9 @@ Through this challenge I was able to reflect on section/week 4 lessons and put t
 2) SyntaxError: unmatched ')'). I tried for hours and hours to debug this error but ran out of time. 
 
 However, I was still able to reflect and analyis the data without the visual (though it would have been much easier to have had it). Some of the takeaways are as follow:
-> The larger the school population the lower the overall grade average tended to be
-> There are higher reading averages than math averages overall 
-> Higher per_student_budget does not yeild higher grade averages
-> Charter schools performed better than district (public) schools
+1) The larger the school population the lower the overall grade average tended to be
+2) There are higher reading averages than math averages overall 
+3) Higher per_student_budget does not yeild higher grade averages
+4) Charter schools performed better than district (public) schools
 
 ______________________________________________________________________________________________________________________________________________________________________________________
